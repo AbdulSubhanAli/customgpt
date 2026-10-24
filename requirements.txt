@@ -4,4 +4,4 @@ langchain-openai
 langchain-core
 streamlit
 tiktoken
-pyhton-dotenv
+python-dotenv

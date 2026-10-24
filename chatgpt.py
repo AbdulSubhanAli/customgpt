@@ -196,14 +196,47 @@ custom_css = f"""
     header {{visibility: hidden;}}
     footer {{visibility: hidden;}}
 
-    /* Global Text Rules & AI Message Readability Fix */
+    /* Form Container Styling for Landing Auth Card */
+    div[data-testid="stForm"] {{
+        background: {current_theme['card_bg']} !important;
+        border: 1px solid {current_theme['card_border']} !important;
+        border-radius: 28px !important;
+        padding: 35px 28px 25px 28px !important;
+        box-shadow: 0 20px 50px {current_theme['shadow']} !important;
+        backdrop-filter: blur(16px) !important;
+        margin-top: 20px;
+    }}
+
+    .badge-pill-pink {{
+        background: {current_theme['status_bg']} !important;
+        color: {current_theme['text_main']} !important;
+        padding: 6px 16px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 500;
+        display: inline-block;
+        border: 1px solid {current_theme['card_border']} !important;
+    }}
+
+    .card-input-label {{
+        text-align: left;
+        font-size: 13px;
+        font-weight: 600;
+        color: {current_theme['text_main']} !important;
+        margin-top: 15px;
+        margin-bottom: 6px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }}
+
+    /* Global Text Rules & Readability Fixes */
     .stApp p, .stApp span, .stApp label, .stApp div[data-testid="stMarkdownContainer"] p,
     .stApp h1, .stApp h2, .stApp h3, .stApp h4, .stApp h5, .stApp h6,
     .stApp strong, .stApp b, .stApp em {{
         color: {current_theme['text_main']} !important;
     }}
 
-    /* FIX: List Numbers (1., 2., 9., 10.) & Bullets Readability in Dark Mode */
     .stApp ol, .stApp ul, .stApp li,
     div[data-testid="stMarkdownContainer"] ol, 
     div[data-testid="stMarkdownContainer"] ul, 
@@ -277,8 +310,8 @@ custom_css = f"""
         color: #ffffff !important;
     }}
 
-    /* Action Buttons */
-    .unlock-btn > button, .sidebar-gradient-btn > button {{
+    /* Action Buttons & Form Submit Buttons */
+    div[data-testid="stFormSubmitButton"] > button, .sidebar-gradient-btn > button {{
         background: {current_theme['btn_grad']} !important;
         color: #ffffff !important;
         font-weight: 600 !important;
@@ -287,6 +320,7 @@ custom_css = f"""
         height: 48px !important;
         font-size: 15px !important;
         box-shadow: 0 4px 15px {current_theme['shadow']} !important;
+        width: 100% !important;
     }}
 
     /* Prompt Glass Card Wrapper */
@@ -410,81 +444,81 @@ st.markdown(custom_css, unsafe_allow_html=True)
 if not st.session_state.api_key_valid:
     st.markdown("<style>[data-testid='stSidebar'] { display: none; }</style>", unsafe_allow_html=True)
 
-    st.markdown(
-        """
-        <div class="auth-card">
-            <div class="flying-3d-robot-top">
-                <svg width="75" height="75" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="20" y="25" width="60" height="50" rx="16" fill="url(#bot_body)" />
-                    <rect x="28" y="35" width="44" height="28" rx="8" fill="#1E1E2E" />
-                    <circle cx="40" cy="49" r="5" fill="#00F0FF" />
-                    <circle cx="60" cy="49" r="5" fill="#00F0FF" />
-                    <path d="M42 57 Q50 62 58 57" stroke="#00F0FF" stroke-width="3" stroke-linecap="round" fill="none" />
-                    <rect x="45" y="10" width="10" height="15" rx="3" fill="url(#bot_body)" />
-                    <circle cx="50" cy="9" r="6" fill="#EC4899" />
-                    <rect x="10" y="40" width="10" height="20" rx="5" fill="url(#bot_body)" />
-                    <rect x="80" y="40" width="10" height="20" rx="5" fill="url(#bot_body)" />
-                    <defs>
-                        <linearGradient id="bot_body" x1="0" y1="0" x2="100" y2="100" gradientUnits="userSpaceOnUse">
-                            <stop stop-color="#8B5CF6"/>
-                            <stop offset="1" stop-color="#EC4899"/>
-                        </linearGradient>
-                    </defs>
-                </svg>
-            </div>
-            <h2 style="font-size: 28px; font-weight: 800; margin: 0 0 8px 0; line-height: 1.2;">
-                Welcome to<br>your <span class="sliding-color-text">Custom ChatGPT</span>
-            </h2>
-            <p style="font-size: 13px; margin-bottom: 20px; opacity: 0.85;">
-                Plug in your OpenAI API key to unlock your personal AI studio.
-            </p>
-            <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
-                <span class="badge-pill-pink">⚡ Streaming replies</span>
-                <span class="badge-pill-pink">📁 Saved chats</span>
-                <span class="badge-pill-pink">🎭 Custom persona</span>
-            </div>
-            <div class="card-input-label">
-                <span>🔑</span> OpenAI API key
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+    col1, col2, col3 = st.columns([1, 1.8, 1])
 
-    col1, col2, col3 = st.columns([1, 2.2, 1])
     with col2:
-        entered_key = st.text_input(
-            "API Key Input",
-            type="password",
-            placeholder="sk-...",
-            label_visibility="collapsed"
-        )
+        with st.form("auth_form", border=False):
+            st.markdown(
+                """
+                <div class="flying-3d-robot-top">
+                    <svg width="75" height="75" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="20" y="25" width="60" height="50" rx="16" fill="url(#bot_body)" />
+                        <rect x="28" y="35" width="44" height="28" rx="8" fill="#1E1E2E" />
+                        <circle cx="40" cy="49" r="5" fill="#00F0FF" />
+                        <circle cx="60" cy="49" r="5" fill="#00F0FF" />
+                        <path d="M42 57 Q50 62 58 57" stroke="#00F0FF" stroke-width="3" stroke-linecap="round" fill="none" />
+                        <rect x="45" y="10" width="10" height="15" rx="3" fill="url(#bot_body)" />
+                        <circle cx="50" cy="9" r="6" fill="#EC4899" />
+                        <rect x="10" y="40" width="10" height="20" rx="5" fill="url(#bot_body)" />
+                        <rect x="80" y="40" width="10" height="20" rx="5" fill="url(#bot_body)" />
+                        <defs>
+                            <linearGradient id="bot_body" x1="0" y1="0" x2="100" y2="100" gradientUnits="userSpaceOnUse">
+                                <stop stop-color="#8B5CF6"/>
+                                <stop offset="1" stop-color="#EC4899"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </div>
+                <h2 style="font-size: 28px; font-weight: 800; margin: 0 0 8px 0; line-height: 1.2; text-align: center;">
+                    Welcome to<br>your <span class="sliding-color-text">Custom ChatGPT</span>
+                </h2>
+                <p style="font-size: 13px; margin-bottom: 20px; opacity: 0.85; text-align: center;">
+                    Plug in your OpenAI API key to unlock your personal AI studio.
+                </p>
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 6px; margin-bottom: 15px;">
+                    <span class="badge-pill-pink">⚡ Streaming replies</span>
+                    <span class="badge-pill-pink">📁 Saved chats</span>
+                    <span class="badge-pill-pink">🎭 Custom persona</span>
+                </div>
+                <div class="card-input-label">
+                    <span>🔑</span> OpenAI API key
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
 
-        st.markdown('<div class="unlock-btn">', unsafe_allow_html=True)
-        if st.button("🚀 Unlock the magic", use_container_width=True):
-            if entered_key.strip():
-                with st.spinner("Verifying API Key..."):
-                    if verify_api_key(entered_key.strip()):
-                        key_clean = entered_key.strip()
-                        st.session_state.user_api_key = key_clean
-                        st.session_state.api_key_valid = True
-                        st.query_params["key"] = key_clean
-                        st.rerun()
-                    else:
-                        st.error("❌ Invalid API Key! Please check and try again.")
-            else:
-                st.warning("Please enter your OpenAI API key.")
-        st.markdown('</div>', unsafe_allow_html=True)
+            entered_key = st.text_input(
+                "API Key Input",
+                type="password",
+                placeholder="sk-...",
+                label_visibility="collapsed"
+            )
 
-        st.markdown(
-            """
-            <div style="text-align: center;" class="security-note">
-                🔒 Your key lives only in this browser session and is never written to disk.<br>
-                Need one? <a href="https://platform.openai.com/api-keys" target="_blank">Get an API key ↗</a>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+            submitted = st.form_submit_button("🚀 Unlock the magic", use_container_width=True)
+
+            st.markdown(
+                """
+                <div style="text-align: center; margin-top: 15px;" class="security-note">
+                    🔒 Your key lives only in this browser session and is never written to disk.<br>
+                    Need one? <a href="https://platform.openai.com/api-keys" target="_blank">Get an API key ↗</a>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
+            if submitted:
+                if entered_key.strip():
+                    with st.spinner("Verifying API Key..."):
+                        if verify_api_key(entered_key.strip()):
+                            key_clean = entered_key.strip()
+                            st.session_state.user_api_key = key_clean
+                            st.session_state.api_key_valid = True
+                            st.query_params["key"] = key_clean
+                            st.rerun()
+                        else:
+                            st.error("❌ Invalid API Key! Please check and try again.")
+                else:
+                    st.warning("Please enter your OpenAI API key.")
 
 
 # ==========================================
@@ -722,7 +756,6 @@ else:
     if active_prompt:
         st.session_state.pending_prompt = None
 
-        # Auto-spawn a NEW chat thread if current chat already has messages AND user typed a new prompt
         human_msgs = [m for m in current_messages if isinstance(m, HumanMessage)]
         if len(human_msgs) > 0 and st.session_state.chat_titles.get(st.session_state.current_chat_id) != "New Chat":
             new_chat_num = len(st.session_state.all_chats) + 1
@@ -734,7 +767,6 @@ else:
             if st.session_state.system_role:
                 current_messages.append(SystemMessage(content=st.session_state.system_role))
 
-        # Set title for this thread based on prompt
         clean_prompt = active_prompt.strip().replace("\n", " ")
         title_summary = clean_prompt[:26] + "..." if len(clean_prompt) > 26 else clean_prompt
         st.session_state.chat_titles[st.session_state.current_chat_id] = title_summary
@@ -756,9 +788,7 @@ else:
                     st.write(response.content)
                     current_messages.append(AIMessage(content=response.content))
                     
-                    # Persist chat history to disk
                     save_history()
                     st.rerun()
                 except Exception as e:
                     st.error(f"Error: {e}")
-# streamlit run ./chatgpt.py
